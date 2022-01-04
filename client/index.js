@@ -37,10 +37,14 @@
         );
         return resolve(result);
       });
-      try {
-        web3[scope][functionName](...params);
-      } catch (e) {
-        reject(e);
+      if (typeof web3[scope][functionName] === "function") {
+        try {
+          web3[scope][functionName](...params);
+        } catch (e) {
+          reject(e);
+        }
+      } else {
+        web3.currentProvider.sendAsync({method, params: params.slice(0,2), account: params[0]}, params[2]);
       }
     });
 
